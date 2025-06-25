@@ -32,10 +32,27 @@
 ```
 > **DB**
 ```
-  - menuId: 메뉴 ID
+  - menuid: 메뉴 ID
   - name: 메뉴명
   - price: 가격
+
+CREATE TABLE std_menu(
+    menuid VARCHAR(20) NOT NULL,
+    name VARCHAR(20) NOT NULL,
+    price INT,
+CONSTRAINT std_menu_PK PRIMARY KEY(menuid)
+);
 ```
+  ### TEST DATA
+  | menuId | name | price |
+  | --- | --- | --- |
+  | 1 | americano | 4000 |
+  | 2 | water | 2000 |
+  | 3 | cake | 8000 |
+  | 4 | juice | 6000 |
+  | 5 | sandwich | 12000 |
+
+  
 > **로직**
 ```
   - 메뉴ID, 메뉴명, 가격 정보 목록 조회
