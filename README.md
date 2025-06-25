@@ -76,7 +76,7 @@ CONSTRAINT std_menu_PK PRIMARY KEY(menuid)
   | 4 | juice | 6000 |
   | 5 | sandwich | 12000 |
 
-> **로직**
+> **테스트 시나리오**
 ```
   - 메뉴ID, 메뉴명, 가격 정보 목록 조회
 ```
@@ -107,7 +107,7 @@ CONSTRAINT std_point_PK PRIMARY KEY(userid)
   | --- | --- |
   | testUser | 20000 |
 
-> **로직**
+> **테스트 시나리오**
 ```
   - 유저식별값을 입력받아 존재하는 유저인지 체크
   - 유저식별값으로 소유 포인트 확인
@@ -159,7 +159,7 @@ CONSTRAINT std_order_menu_info_PK PRIMARY KEY(ukey),
 CONSTRAINT std_order_menu_info_FK FOREIGN KEY(orderKey) REFERENCES std_order_info (ukey) 
 );
 ```
-> **로직**
+> **테스트 시나리오**
 ```
   - 유저식별값으로 존재하는 유저인지 체크
   - 단수 혹은 복수의 메뉴선택 후 주문 요청
@@ -182,7 +182,7 @@ CONSTRAINT std_order_menu_info_FK FOREIGN KEY(orderKey) REFERENCES std_order_inf
 ```
   -
 ``` 
-> **로직**
+> **테스트 시나리오**
 ```
   - 
 ```
