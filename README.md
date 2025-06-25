@@ -43,7 +43,8 @@ CREATE TABLE std_menu(
 CONSTRAINT std_menu_PK PRIMARY KEY(menuid)
 );
 ```
-  ### TEST DATA
+> TEST DATA
+
   | menuId | name | price |
   | --- | --- | --- |
   | 1 | americano | 4000 |
@@ -52,7 +53,6 @@ CONSTRAINT std_menu_PK PRIMARY KEY(menuid)
   | 4 | juice | 6000 |
   | 5 | sandwich | 12000 |
 
-  
 > **로직**
 ```
   - 메뉴ID, 메뉴명, 가격 정보 목록 조회
@@ -71,7 +71,19 @@ CONSTRAINT std_menu_PK PRIMARY KEY(menuid)
 ```
   - userId: 유저식별값
   - point: 소유 포인트
+
+CREATE TABLE std_point(
+    userid VARCHAR(20) NOT NULL,
+    point INT,
+CONSTRAINT std_point_PK PRIMARY KEY(userid)
+);
 ```
+> TEST DATA
+
+  | userid | point |
+  | --- | --- |
+  | testUser | 20000 |
+
 > **로직**
 ```
   - 유저식별값을 입력받아 존재하는 유저인지 체크
@@ -98,11 +110,31 @@ CONSTRAINT std_menu_PK PRIMARY KEY(menuid)
     - orderStatus: 주문상태(N:결제 전, Y:결제 완료)
     - regdate: 주문일자
     - paydate: 결제일자
+
+CREATE TABLE std_order_info(
+    ukey VARCHAR(20) NOT NULL,
+    userId VARCHAR(20) NOT NULL,
+    totalPrice INT,
+    orderStatus VARCHAR(1),
+    regdate DATETIME,
+    paydate DATETIME,
+CONSTRAINT std_order_info_PK PRIMARY KEY(ukey)
+);
+
   Table: order_menu_info
     - ukey: PK, unique key
     - orderKey: FK, 주문키(order_info:ukey -> 1:N)
     - menuId: 주문요청 메뉴Id
     - price: 주문요청 메뉴가격
+
+CREATE TABLE std_order_menu_info(
+    ukey VARCHAR(20) NOT NULL,
+    orderKey VARCHAR(20) NOT NULL,
+    menuId VARCHAR(20),
+    price INT,
+CONSTRAINT std_order_menu_info_PK PRIMARY KEY(ukey),
+CONSTRAINT std_order_menu_info_FK FOREIGN KEY(orderKey) REFERENCES std_order_info (ukey) 
+);
 ```
 > **로직**
 ```
