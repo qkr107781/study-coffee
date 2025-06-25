@@ -1,5 +1,28 @@
 ## 🙌 TDD 방법론 스터디 Coffee 프로젝트
 
+## Test Code 작성법
+  - TDD 원칙
+    - 1 - 실패하는 단위 테스트를 작성할 때까지 프로덕션 코드(production code)를 작성하지 않습니다.
+    - 2 - 컴파일은 실패하지 않으면서 실행이 실패하는 정도로만 단위 테스트를 작성합니다.
+    - 3 - 현재 실패하는 테스트를 통과할 정도로만 실제 코드를 작성합니다.
+  - red -> green -> refactoring의 순환으로 테스트 코드 작성 진행
+    - (red)구현을 원하는 기능에 대해 테스트 시나리오 고민해보고 테스트 코드로 먼저 작성해보기
+    - (green)테스트 코드에서 오류 발생하는 부분 통과되도록 실제 코드 일부 구현해보기
+    - (refactoring)테스트 코드 가독성 좋게, 확장성 좋게 수정해보기
+  - GWT Pattern
+    - 1 - Given - 준비 => 입력 값, Mock 객체, 변수 등 실행을 위한 사전준비
+    - 2 - When - 실행 => 테스트 대상 메소드 혹은 모듈 실행
+    - 3 - Then - 검증 => 실행 결과에 대한 검증
+  - Mockito
+    - mock(): Test Double 객체 생성, stub
+    - when().thenReturn(): when에 생성된 mock객체에서 실행될 메소드 입력, thenReturn으로 결과 값 지정
+    - when().thenThrow(): when에 생성된 mock객체에서 실행될 메소드 입력, thenThrow에 지정한 Exception 발생
+    - verify(): mock 객체에 대한 검증 => atLeastOnce().method: mock객체의 method가 최소 한번 실행 됐는지 검증
+  - Assert
+    - assertEquals(expected,actual): 기대 값과 실행 값이 같으면 Then(검증) 성공
+    - assertTrue(boolean): 결과 값이 true 혹은 비교연산자의 결과가 true면 Then(검증) 성공
+    - assertThrows(Exception.class,method): 실행된 메소드가 지정한 Exception클래스로 Throw될때 예외처리 사항을 리턴
+
 ## 요구사항
   - 메뉴 조회
     - 커피 정보(메뉴ID, 이름, 가격)을 조회
