@@ -92,10 +92,10 @@ CONSTRAINT std_menu_PK PRIMARY KEY(menuid)
 ```
 > **DB**
 ```
-  - userId: 유저식별값
+  - userid: 유저식별값
   - point: 소유 포인트
 
-CREATE TABLE std_point(
+CREATE table std_point(
     userid VARCHAR(20) NOT NULL,
     point INT,
 CONSTRAINT std_point_PK PRIMARY KEY(userid)
@@ -128,17 +128,17 @@ CONSTRAINT std_point_PK PRIMARY KEY(userid)
 ```
   Table: order_info  
     - ukey: PK, unique key
-    - userId: 주문요청 유저식별값
-    - totalPrice: 총 결제금액
-    - orderStatus: 주문상태(N:결제 전, Y:결제 완료)
+    - userid: 주문요청 유저식별값
+    - totalprice: 총 결제금액
+    - orderstatus: 주문상태(N:결제 전, Y:결제 완료)
     - regdate: 주문일자
     - paydate: 결제일자
 
 CREATE TABLE std_order_info(
     ukey VARCHAR(20) NOT NULL,
-    userId VARCHAR(20) NOT NULL,
-    totalPrice INT,
-    orderStatus VARCHAR(1),
+    userid VARCHAR(20) NOT NULL,
+    totalprice INT,
+    orderstatus VARCHAR(1),
     regdate DATETIME,
     paydate DATETIME,
 CONSTRAINT std_order_info_PK PRIMARY KEY(ukey)
@@ -146,17 +146,17 @@ CONSTRAINT std_order_info_PK PRIMARY KEY(ukey)
 
   Table: order_menu_info
     - ukey: PK, unique key
-    - orderKey: FK, 주문키(order_info:ukey -> 1:N)
-    - menuId: 주문요청 메뉴Id
+    - orderkey: FK, 주문키(order_info:ukey -> 1:N)
+    - menuid: 주문요청 메뉴Id
     - price: 주문요청 메뉴가격
 
 CREATE TABLE std_order_menu_info(
     ukey VARCHAR(20) NOT NULL,
-    orderKey VARCHAR(20) NOT NULL,
-    menuId VARCHAR(20),
+    orderkey VARCHAR(20) NOT NULL,
+    menuid VARCHAR(20),
     price INT,
 CONSTRAINT std_order_menu_info_PK PRIMARY KEY(ukey),
-CONSTRAINT std_order_menu_info_FK FOREIGN KEY(orderKey) REFERENCES std_order_info (ukey) 
+CONSTRAINT std_order_menu_info_FK FOREIGN KEY(orderkey) REFERENCES std_order_info (ukey) 
 );
 ```
 > **테스트 시나리오**
