@@ -7,4 +7,6 @@ import com.study.coffee.menu.domain.MenuDTO;
 
 @Repository
 public interface MenuRepository extends JpaRepository<MenuDTO, String>{
+	
+	public MenuDTO findByMenuid(String menuid);
 }

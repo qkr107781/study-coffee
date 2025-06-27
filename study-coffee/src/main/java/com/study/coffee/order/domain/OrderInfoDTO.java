@@ -1,17 +1,13 @@
 package com.study.coffee.order.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,19 +22,18 @@ public class OrderInfoDTO {
 
 	@Builder
 	public OrderInfoDTO(String ukey, String userId, int totalprice, String orderstatus, LocalDateTime regdate,
-			LocalDateTime paydate, List<OrderMenuInfoDTO> orderMenuInfo) {
+			LocalDateTime paydate) {
 		this.ukey = ukey;
 		this.userid = userId;
 		this.totalprice = totalprice;
 		this.orderstatus = orderstatus;
 		this.regdate = regdate;
 		this.paydate = paydate;
-		this.orderMenuInfo = orderMenuInfo;
 	}
 	
 	@Id
 	@Column(name="ukey",columnDefinition = "VARCHAR(20)")
-	@GeneratedValue(strategy = GenerationType.IDENTITY) //DB에 설정된 방식으로 기본키 생성
+//	@GeneratedValue(strategy = GenerationType.IDENTITY) //DB에 설정된 방식으로 기본키 생성
 	private String ukey;
 	
 	@Column(name="userid",columnDefinition = "VARCHAR(20)")
@@ -57,9 +52,6 @@ public class OrderInfoDTO {
 	@Column(name="paydate",columnDefinition = "DATETIME")
 	private LocalDateTime paydate;
 	
-	@OneToMany
-	private List<OrderMenuInfoDTO> orderMenuInfo;
-
 	public void updateOrderStatus(String orderstatus) {
 		this.orderstatus = orderstatus;
 	}

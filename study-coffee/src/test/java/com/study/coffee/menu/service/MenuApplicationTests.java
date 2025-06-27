@@ -6,16 +6,18 @@ import static org.mockito.Mockito.atLeastOnce;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.study.coffee.menu.domain.MenuDTO;
 import com.study.coffee.menu.repository.MenuRepository;
 
-@SpringBootTest
+
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class MenuApplicationTests {
 
 	/**
@@ -76,17 +78,17 @@ class MenuApplicationTests {
 	@Test
 	void 커피_메뉴_단건_조회() {
 		//Given
-		Optional<MenuDTO> americano = Optional.ofNullable(MenuDTO.builder().menuid("1").name("americano").price(4000).build()); 
+		MenuDTO americano = MenuDTO.builder().menuid("1").name("americano").price(4000).build(); 
 		
 		MenuRepository mock = Mockito.mock(MenuRepository.class);
-		Mockito.when(mock.findById("1")).thenReturn(americano);
+		Mockito.when(mock.findByMenuid("1")).thenReturn(americano);
 		
 		//When
 		MenuService menuService = new MenuService(mock);
-		Optional<MenuDTO> menu = menuService.getMenu("1");
+		MenuDTO menu = menuService.getMenu("1");
 		
 		//Then
-		Mockito.verify(mock,atLeastOnce()).findById("1");
+		Mockito.verify(mock,atLeastOnce()).findByMenuid("1");
 		assertEquals(americano,menu);
 		
 	}

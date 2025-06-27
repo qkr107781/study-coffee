@@ -1,7 +1,6 @@
 package com.study.coffee.menu.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ public class MenuService {
 		return menuRepository.findAll();
 	}
 	
-	public Optional<MenuDTO> getMenu(String menuId) {
-		return menuRepository.findById(menuId);
+	public MenuDTO getMenu(String menuid) {
+		return menuRepository.findByMenuid(menuid);
 	}
 }

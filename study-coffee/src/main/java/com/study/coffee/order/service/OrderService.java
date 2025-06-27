@@ -1,33 +1,33 @@
 package com.study.coffee.order.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.study.coffee.menu.domain.MenuDTO;
 import com.study.coffee.menu.repository.MenuRepository;
 import com.study.coffee.order.domain.OrderInfoDTO;
 import com.study.coffee.order.domain.OrderMenuInfoDTO;
-import com.study.coffee.order.repository.OrderRepository;
+import com.study.coffee.order.repository.OrderInfoRepository;
+import com.study.coffee.order.repository.OrderMenuInfoRepository;
 import com.study.coffee.point.domain.PointDTO;
+import com.study.coffee.point.repository.PointRepository;
 
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @Service
 public class OrderService {
 
-	private final OrderRepository orderRepository;
+	private final OrderInfoRepository orderInfoRepository;
+	private final OrderMenuInfoRepository orderMenuInfoRepository;
 	private final MenuRepository menuRepository;
-	private final EntityManager em;
+	private final PointRepository pointRepository;
 	
-	public OrderService(OrderRepository orderRepository, MenuRepository menuRepository, EntityManager em) {
-		this.orderRepository = orderRepository;
+	public OrderService(OrderInfoRepository orderInfoRepository, OrderMenuInfoRepository orderMenuInfoRepository, MenuRepository menuRepository, PointRepository pointRepository) {
+		this.orderInfoRepository = orderInfoRepository;
+		this.orderMenuInfoRepository = orderMenuInfoRepository;
 		this.menuRepository = menuRepository;
-		this.em = em;
+		this.pointRepository = pointRepository;
 	}
 
 	//유저식별값으로 존재하는 유저인지 체크 -> 컨트롤러에서 체크
@@ -35,28 +35,18 @@ public class OrderService {
 	//주문 완료 후 소유 포인트 체크하여 결제 금액보다 모자른 경우 결제 불가 -> 포인트 충전으로 이동 -> 컨트롤러에서 체크
 	//주문 완료 후 소유 포인트 부족 상태에서 충전하지 않고 종료 -> 컨트롤러에서 체크
 	public OrderInfoDTO saveOrder(String userid, String[] menuIds) {
-		String orderUkey = "1";
+//		String orderUkey = UUID.randomUUID().toString();
+		String orderUkey = "testUserOrder";
 		int totalPrice = 0;
 		String orderStatus = "N";
 		
 		
 		//입력받은 menuIds로 메뉴 가격 조회하여 세팅
-		List<OrderMenuInfoDTO> orderMenuInfoList = new ArrayList<>();
 		for (int i = 0; i < menuIds.length; i++) {
 			if(StringUtils.isEmpty(menuIds[i])) {
 				return null;
 			}
-			int price = menuRepository.findById(menuIds[i]).map(MenuDTO::getPrice).get();
-			
-			OrderMenuInfoDTO orderMenuInfo =  OrderMenuInfoDTO.builder()
-															.ukey(Integer.toString(i))
-															.menuid(menuIds[i])
-															.orderkey(orderUkey)
-															.price(price)
-															.build();
-			orderMenuInfoList.add(orderMenuInfo);
-			
-			totalPrice += menuRepository.findById(menuIds[i]).map(MenuDTO::getPrice).get();
+			totalPrice += menuRepository.findByMenuid(menuIds[i]).getPrice();
 		}
 		
 		OrderInfoDTO order = OrderInfoDTO.builder()
@@ -66,10 +56,24 @@ public class OrderService {
 										.orderstatus(orderStatus)
 										.regdate(LocalDateTime.now())
 										.paydate(null)
-										.orderMenuInfo(orderMenuInfoList)
 										.build();
 		
-		return orderRepository.save(order);
+		OrderInfoDTO orderResult = orderInfoRepository.save(order);
+		
+		if(orderResult != null) {
+			//입력받은 menuIds로 메뉴 가격 조회하여 세팅
+			for (int i = 0; i < menuIds.length; i++) {
+				int price =  menuRepository.findByMenuid(menuIds[i]).getPrice();
+				OrderMenuInfoDTO orderMenuInfo = OrderMenuInfoDTO.builder()
+																.ukey(Integer.toString(i+1))
+																.menuid(menuIds[i])
+																.price(price)
+																.orderInfo(order)
+																.build();
+				orderMenuInfoRepository.save(orderMenuInfo);
+			}
+		}
+		return orderResult;
 	}
 	  
 	//주문상태 체크하여 결제 요청
@@ -81,19 +85,21 @@ public class OrderService {
 		int totalPrice = orderInfoDTO.getTotalprice();
 		
 		if("N".equals(orderStatus)) {
-			PointDTO pointDTO = em.find(PointDTO.class, userId); 
+			System.out.println("결제시작");
+			PointDTO pointDTO = pointRepository.findByUserId(userId).get(); 
 			
 			int userPoint = pointDTO.getPoint();
-			int remainigPoint = totalPrice - userPoint;
+			int remainigPoint = userPoint - totalPrice;
 			if(remainigPoint < 0) {
 				return false;
 			}else {
 				pointDTO.updatePoint(remainigPoint);
 			}
-			
-			OrderInfoDTO order = em.find(OrderInfoDTO.class, orderInfoDTO.getUkey());
+			System.out.println("포인트 차감 완료");
+			OrderInfoDTO order = orderInfoRepository.findByUkey(orderInfoDTO.getUkey());
 			order.updateOrderStatus("Y");
 			order.updatePaydate(LocalDateTime.now());
+			System.out.println("주문 상태 변경 완료");
 		}
 		
 		return true;
